@@ -1,0 +1,10 @@
+{
+  "mode": "paper",
+  "capital_usdt": "100",
+  "max_leverage": "10",
+  "risk_per_trade": "0.005",
+  "daily_loss_limit": "0.02",
+  "max_margin_fraction": "0.20",
+  "fee_rate_per_side": "0.0005",
+  "slippage_rate_per_side": "0.0002"
+}
