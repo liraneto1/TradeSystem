@@ -7,5 +7,7 @@ __pycache__/
 data/
 logs/
 models/
+.vendor/
+reports/
 *.egg-info/
 .pytest_cache/

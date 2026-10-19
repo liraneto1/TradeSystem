@@ -39,14 +39,14 @@ Perdas reais podem exceder estimativas por gaps, slippage e liquidação.
 1. **Implementado:** configuração, dimensionamento Decimal, filtros fornecidos pelo chamador,
    simulação de abertura/fechamento e testes de risco e contabilidade.
 2. **Implementado:** coleta pública USDⓈ-M, candles fechados, filtros reais, armazenamento e validação temporal.
-3. Adaptador Kronos com revisão fixa de código/pesos; comparação com baseline sem IA.
+3. **Implementado:** adaptador Kronos com revisão fixa de código/pesos e avaliação temporal contra persistência.
 4. Backtest temporal: taxas, funding, slippage, margem e liquidação; prevenção de vazamento.
 5. Demo Binance: reconciliação persistente, ordens idempotentes, stops na corretora,
    recuperação após reinício, perda diária persistente e parada de emergência.
 6. Operação real limitada após validação e definição final dos parâmetros.
 
 BTCUSDT, candles de 15 minutos e USDⓈ-M são propostas iniciais, não requisitos confirmados.
-Não há execução Binance, credenciais, download de modelos, HMM ou estratégia lucrativa validada nesta versão.
+Não há execução Binance, credenciais, HMM ou estratégia lucrativa validada nesta versão.
 
 ## Coletar dados reais (somente leitura)
 
@@ -64,6 +64,33 @@ Em erros HTTP/restrições/limites a coleta para, sem tentar contornar restriç�
 Os filtros LOT_SIZE e MIN_NOTIONAL são para pesquisa; execução exigirá também PRICE_FILTER,
 MARKET_LOT_SIZE, quantidades máximas e demais regras aplicáveis ao tipo de ordem.
 
+## Kronos local e avaliação de previsões
+
+Instalação opcional no ambiente isolado, sem alterar a instalação global do Python:
+
+```powershell
+.\.venv\Scripts\python.exe -m pip install torch==2.8.0 --index-url https://download.pytorch.org/whl/cpu
+.\.venv\Scripts\python.exe -m pip install -r requirements-kronos.txt
+.\.venv\Scripts\python.exe -m tradesystem.kronos_setup
+.\.venv\Scripts\python.exe -m tradesystem.forecast --dataset data/btc-15m-initial --lookback 128 --horizon 4 --windows 5 --output reports/kronos-initial
+```
+
+Instale os pacotes em sequência. A preparação requer internet, Git e espaço para PyTorch e pesos.
+As revisões imutáveis constam em `config/kronos.lock.json`. O código original é clonado somente
+em `.vendor/Kronos`, com licença MIT preservada; não é modificado nem enviado ao repositório
+original. Pesos públicos são baixados com autenticação desativada para `models/`, com registro
+local SHA-256 de integridade. `.vendor/`, `models/`, `reports/` e `data/` não são publicados.
+Após preparação, a inferência usa pesos locais, CPU, seed 42 e uma trajetória por previsão.
+O ambiente e as dependências transitivas também podem afetar a reprodução numérica.
+
+A avaliação usa janelas cronológicas com alvos sem sobreposição. Apenas o histórico anterior
+é entregue ao modelo. O benchmark de persistência prevê o último fechamento para todo o horizonte.
+`predictions.csv` e `metrics.json` registram previsões, MAE, parâmetros, procedência dos dados
+e revisões utilizadas. O erro é expresso em unidades de preço USDT, não em lucro da estratégia.
+Esta amostra pequena não demonstra vantagem persistente nem rentabilidade. Ainda não foi
+auditada possível sobreposição com dados de pré-treino; isso não é um teste totalmente fora
+da amostra de treinamento do modelo. Não há ajuste fino ou escolha automática de estratégia.
+
 ## Segurança e limites
 
 Nunca versionar chaves, tokens, `.env`, dados de conta ou modelos baixados.
@@ -75,4 +102,4 @@ O simulador não representa funding, liquidação, marcação a mercado, execuç
 - https://github.com/shiyu-coder/Kronos
 - https://developers.binance.com/en/docs/products/derivatives-trading-usds-futures/general-info
 
-Kronos não está copiado nem instalado neste repositório.
+A cópia local do Kronos e os pesos não fazem parte dos arquivos versionados do TradeSystem.

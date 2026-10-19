@@ -1,0 +1,8 @@
+{
+  "source_url": "https://github.com/shiyu-coder/Kronos.git",
+  "source_revision": "67b630e67f6a18c9e9be918d9b4337c960db1e9a",
+  "model_id": "NeoQuasar/Kronos-small",
+  "model_revision": "901c26c1332695a2a8f243eb2f37243a37bea320",
+  "tokenizer_id": "NeoQuasar/Kronos-Tokenizer-base",
+  "tokenizer_revision": "0e0117387f39004a9016484a186a908917e22426"
+}
