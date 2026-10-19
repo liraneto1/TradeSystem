@@ -38,7 +38,7 @@ Perdas reais podem exceder estimativas por gaps, slippage e liquidação.
 
 1. **Implementado:** configuração, dimensionamento Decimal, filtros fornecidos pelo chamador,
    simulação de abertura/fechamento e testes de risco e contabilidade.
-2. Dados públicos USDⓈ-M: candles fechados, filtros reais, armazenamento e validação temporal.
+2. **Implementado:** coleta pública USDⓈ-M, candles fechados, filtros reais, armazenamento e validação temporal.
 3. Adaptador Kronos com revisão fixa de código/pesos; comparação com baseline sem IA.
 4. Backtest temporal: taxas, funding, slippage, margem e liquidação; prevenção de vazamento.
 5. Demo Binance: reconciliação persistente, ordens idempotentes, stops na corretora,
@@ -46,7 +46,23 @@ Perdas reais podem exceder estimativas por gaps, slippage e liquidação.
 6. Operação real limitada após validação e definição final dos parâmetros.
 
 BTCUSDT, candles de 15 minutos e USDⓈ-M são propostas iniciais, não requisitos confirmados.
-Não há conector Binance, credenciais, download de modelos, HMM ou estratégia lucrativa validada nesta versão.
+Não há execução Binance, credenciais, download de modelos, HMM ou estratégia lucrativa validada nesta versão.
+
+## Coletar dados reais (somente leitura)
+
+```powershell
+.\.venv\Scripts\python.exe -m tradesystem.market --symbol BTCUSDT --interval 15m --count 400 --output data/btc-15m-001
+```
+
+Requer internet e disponibilidade regional da API pública. Não requer chave de API.
+Usa o relógio do servidor para excluir o candle em formação, pagina até 10.000 candles e rejeita
+lacunas, duplicatas, OHLC inválido e respostas incompletas. Intervalos: 1m, 5m, 15m e 1h.
+O diretório de saída deve ser novo; contém `candles.csv` e `metadata.json`, com procedência,
+horário e snapshot das regras do contrato. Timestamps são Unix em milissegundos UTC.
+`amount` representa volume cotado da Binance. Os dados ficam ignorados pelo Git.
+Em erros HTTP/restrições/limites a coleta para, sem tentar contornar restrições da Binance.
+Os filtros LOT_SIZE e MIN_NOTIONAL são para pesquisa; execução exigirá também PRICE_FILTER,
+MARKET_LOT_SIZE, quantidades máximas e demais regras aplicáveis ao tipo de ordem.
 
 ## Segurança e limites
 
