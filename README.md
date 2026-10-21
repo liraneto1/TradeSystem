@@ -91,6 +91,18 @@ Esta amostra pequena não demonstra vantagem persistente nem rentabilidade. Aind
 auditada possível sobreposição com dados de pré-treino; isso não é um teste totalmente fora
 da amostra de treinamento do modelo. Não há ajuste fino ou escolha automática de estratégia.
 
+## Estratégia SMC experimental
+
+A estratégia inicial está definida em [docs/smc-strategy.md](docs/smc-strategy.md), com
+parâmetros em `config/smc.json`. O módulo `tradesystem.smc` identifica varredura de liquidez,
+possível mudança de estrutura e FVG, propondo entrada no reteste de 50%, stop e alvo de 2R.
+Inclui testes de causalidade: acrescentar candles futuros não pode alterar sinais anteriores.
+Essa versão gera candidatos; ainda não executa o backtest financeiro ou ordens Binance.
+
+```powershell
+.\.venv\Scripts\python.exe -m tradesystem.smc --dataset data/btc-15m-initial --output reports/smc-initial
+```
+
 ## Segurança e limites
 
 Nunca versionar chaves, tokens, `.env`, dados de conta ou modelos baixados.

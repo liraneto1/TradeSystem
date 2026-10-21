@@ -1,0 +1,11 @@
+{
+  "pivot_left": 2,
+  "pivot_right": 2,
+  "atr_period": 14,
+  "confirmation_bars": 6,
+  "entry_expiry_bars": 4,
+  "displacement_atr": "1.0",
+  "min_gap_atr": "0.05",
+  "stop_buffer_atr": "0.10",
+  "reward_risk": "2.0"
+}
