@@ -1,6 +1,6 @@
 # TradeSystem
 
-Agente local de pesquisa para Binance Futuros. **Versão 0.1: somente simulação offline.**
+Agente local de pesquisa para Binance Futuros. **Somente pesquisa e simulação; sem ordens reais.**
 
 ## Requisitos definidos
 
@@ -40,7 +40,8 @@ Perdas reais podem exceder estimativas por gaps, slippage e liquidação.
    simulação de abertura/fechamento e testes de risco e contabilidade.
 2. **Implementado:** coleta pública USDⓈ-M, candles fechados, filtros reais, armazenamento e validação temporal.
 3. **Implementado:** adaptador Kronos com revisão fixa de código/pesos e avaliação temporal contra persistência.
-4. Backtest temporal: taxas, funding, slippage, margem e liquidação; prevenção de vazamento.
+4. **Implementado, exploratório:** backtest SMC com custos, funding histórico, mark price,
+   limites de risco e modelo aproximado de margem isolada/liquidação.
 5. Demo Binance: reconciliação persistente, ordens idempotentes, stops na corretora,
    recuperação após reinício, perda diária persistente e parada de emergência.
 6. Operação real limitada após validação e definição final dos parâmetros.
@@ -97,16 +98,32 @@ A estratégia inicial está definida em [docs/smc-strategy.md](docs/smc-strategy
 parâmetros em `config/smc.json`. O módulo `tradesystem.smc` identifica varredura de liquidez,
 possível mudança de estrutura e FVG, propondo entrada no reteste de 50%, stop e alvo de 2R.
 Inclui testes de causalidade: acrescentar candles futuros não pode alterar sinais anteriores.
-Essa versão gera candidatos; ainda não executa o backtest financeiro ou ordens Binance.
+Esse módulo gera candidatos; o motor separado `tradesystem.backtest` simula a execução financeira.
 
 ```powershell
 .\.venv\Scripts\python.exe -m tradesystem.smc --dataset data/btc-15m-initial --output reports/smc-initial
 ```
 
+## Executar backtest SMC
+
+Consulte [docs/backtest.md](docs/backtest.md) para instalação dos dados, convenções e limitações.
+
+```powershell
+.\.venv\Scripts\python.exe -m tradesystem.futures_data --dataset data/btc-15m-initial
+.\.venv\Scripts\python.exe -m tradesystem.backtest --dataset data/btc-15m-initial --output reports/smc-backtest-novo
+```
+
+Se o suplemento já existir, execute somente o segundo comando. O destino do relatório deve ser novo.
+O cenário padrão usa 2x; `--config config/backtest-5x.json` permite o cenário diagnóstico de 5x.
+Isso não configura uma conta Binance. Não há filtro Kronos no SMC inicial.
+O experimento inicial e seus resultados estão em [docs/smc-backtest-validation.md](docs/smc-backtest-validation.md).
+
 ## Segurança e limites
 
 Nunca versionar chaves, tokens, `.env`, dados de conta ou modelos baixados.
-O simulador não representa funding, liquidação, marcação a mercado, execução parcial ou gaps.
+O `PaperBroker` da demonstração básica não representa funding, liquidação, marcação ou gaps.
+O backtest separado inclui funding histórico, marcação e gaps, mas usa liquidação simplificada,
+filtros atuais no passado e execução sem filas/parciais. Resultados ainda não habilitam operação real.
 `PaperBroker` recebe planos do motor de risco; não substitui uma fronteira de execução validada.
 
 ## Referências

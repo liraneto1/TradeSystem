@@ -50,7 +50,7 @@ do FVG, stop acima da máxima da varredura e alvo de 2R abaixo da entrada.
 - Candle que rompe simultaneamente os dois níveis não inicia setup por ambiguidade.
 - Enquanto aguarda confirmação, mantém somente uma hipótese; não a substitui por outra.
 - Um sinal pronto não impede novos candidatos futuros; a posição/ordem única será imposta
-  pelo executor de backtest, que ainda será implementado.
+  pelo executor de backtest separado (`tradesystem.backtest`).
 - Sem filtro Kronos na versão 0.1. Isso permite medir o SMC isoladamente antes de avaliar
   se adicionar o modelo melhora um conjunto de teste reservado.
 - Sem order blocks, equal highs/lows, premium/discount, timeframe superior ou otimização
@@ -74,12 +74,12 @@ O diretório de saída deve ser novo. `signals.csv` e `summary.json` guardam can
 configuração e hash do dataset. Os preços são teóricos e ainda precisam de arredondamento
 ao tick e validação dos filtros de preço/quantidade antes de qualquer ordem.
 
-## Próximo passo: execução histórica
+## Execução histórica
 
-Implementar a ordem limite ativa apenas após o sinal, cancelamento por expiração/invalidação,
-uma posição por vez, regras conservadoras para candle que toca entrada/stop/alvo, gaps,
-fees, slippage, funding e margem/liquidação. Calcular curva de patrimônio e drawdown.
-Em seguida avaliar períodos separados, reservando o conjunto final, e preparar o painel.
+O executor separado já implementa ordem limite após o sinal, expiração/invalidação,
+posição única, convenções conservadoras de OHLC, gaps, custos, funding histórico,
+mark price e modelo aproximado de margem isolada/liquidação. Detalhes em `docs/backtest.md`.
+Faltam calibração de execução e faixas de margem, validação em períodos reservados e painel.
 
 ## Referência conceitual
 

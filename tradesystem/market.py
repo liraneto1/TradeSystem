@@ -66,7 +66,8 @@ class PublicClient:
     BASE_URL = "https://fapi.binance.com"
 
     def get(self, path, **params):
-        if path not in ("/fapi/v1/time", "/fapi/v1/exchangeInfo", "/fapi/v1/klines"):
+        if path not in ("/fapi/v1/time", "/fapi/v1/exchangeInfo", "/fapi/v1/klines",
+                        "/fapi/v1/markPriceKlines", "/fapi/v1/fundingRate"):
             raise ValueError("Endpoint not allowed")
         url = self.BASE_URL + path + ("?" + urlencode(params) if params else "")
         # No automatic retries: fail on throttling or regional restrictions.
